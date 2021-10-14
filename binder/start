@@ -1,10 +1,10 @@
 #!/bin/bash
 
-$HOME/.tomcat/bin/startup.sh
-
 #Start OpenRefine
 OPENREFINE_DIR="$HOME/openrefine"
 mkdir -p $OPENREFINE_DIR
 nohup $HOME/.openrefine/openrefine-2.8/refine -p 3333 -d OPENREFINE_DIR > /dev/null 2>&1 &
+
+$HOME/.tomcat/bin/startup.sh
 
 exec "$@" 

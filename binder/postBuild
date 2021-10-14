@@ -13,41 +13,5 @@ TOMCAT_VERSION="9.0.52"
 
 wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -P $HOME
 tar -xf $HOME/apache-tomcat-${TOMCAT_VERSION}.tar.gz -C $HOME/
-mv $HOME/apache-tomcat-${TOMCAT_VERSION} $HOME/.tomcat
+mv $HOME/apache-tomcat-${TOMCAT_VERSION} $HOME/tomcat
 chmod +x $HOME/.tomcat/bin/*.sh
-
-mv $HOME/.tomcat/webapps $HOME/.tomcat/webapps.dist
-mkdir $HOME/.tomcat/webapps
-
-GUACAMOLE_VERSION="1.3.0"
-WORKDIR /etc/guacamole
-wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/binary/guacamole-1.3.0.war" -O $HOME/.tomcat/webapps/ROOT.war
-mkdir -p $HOME/.guacamole
-wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/source/guacamole-server-1.3.0.tar.gz" -O $HOME/.guacamole/guacamole-server-${GUACAMOLE_VERSION}.tar.gz
-tar xvf $HOME/.guacamole/guacamole-server-${GUACAMOLE_VERSION}.tar.gz
-cd $HOME/.guacamole/guacamole-server-${GUACAMOLE_VERSION}
-./configure --with-init-dir=/etc/init.d
-make
-make install
-ldconfig
-rm -r $HOME/.guacamole/guacamole-server-${GUACAMOLE_VERSION}*
-
-# Create Guacamole configurations
-echo "user-mapping: $HOME/.guacamole/user-mapping.xml" > $HOME/.guacamole/guacamole.properties
-touch $HOME/.guacamole/user-mapping.xml
-
-echo \
-"<user-mapping>
-<authorize username=\"user\" password=\"password\">
-<connection name=\"Desktop Auto-Resolution (RDP)\">
-<protocol>rdp</protocol>
-<param name=\"hostname\">localhost</param>
-<param name=\"username\">user</param>
-<param name=\"password\">password</param>
-<param name=\"port\">3389</param>
-<param name=\"security\">any</param>
-<param name=\"ignore-cert\">true</param>
-<param name=\"resize-method\">reconnect</param>
-</connection>
-</authorize>
-</user-mapping>" >> $HOME/.guacamole/user-mapping.xml
