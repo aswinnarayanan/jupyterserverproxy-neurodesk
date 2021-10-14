@@ -7,3 +7,13 @@ tar xzf openrefine-2.8.tar.gz -C $HOME/.openrefine
 rm openrefine-2.8.tar.gz
 
 mkdir -p $HOME/openrefine
+
+TOMCAT_REL="9"
+TOMCAT_VERSION="9.0.52"
+
+wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -P /tmp
+tar -xf /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz -C /tmp \
+mv /tmp/apache-tomcat-${TOMCAT_VERSION} /usr/local/tomcat \
+mv /usr/local/tomcat/webapps /usr/local/tomcat/webapps.dist \
+mkdir /usr/local/tomcat/webapps \
+sh -c 'chmod +x /usr/local/tomcat/bin/*.sh'
