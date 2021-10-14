@@ -1,1 +1,7 @@
 openjdk-11-jre
+make
+libpng-dev
+libjpeg-turbo8-dev
+libcairo2-dev
+libtool-bin
+libossp-uuid-dev
