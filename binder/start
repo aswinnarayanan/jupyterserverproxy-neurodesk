@@ -5,6 +5,6 @@ OPENREFINE_DIR="$HOME/openrefine"
 mkdir -p $OPENREFINE_DIR
 nohup $HOME/.openrefine/openrefine-2.8/refine -p 3333 -d OPENREFINE_DIR > /dev/null 2>&1 &
 
-/usr/local/tomcat/bin/startup.sh
+$HOME/.tomcat/bin/startup.sh
 
 exec "$@" 
