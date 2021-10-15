@@ -1,5 +1,0 @@
-#!/bin/bash
-
-$HOME/.tomcat/bin/startup.sh
-
-exec "$@" 
