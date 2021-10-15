@@ -1,3 +1,6 @@
+ARG TOMCAT_REL="9"
+ARG TOMCAT_VERSION="9.0.52"
+
 FROM jupyter/base-notebook:python-3.7.6
 
 USER root
