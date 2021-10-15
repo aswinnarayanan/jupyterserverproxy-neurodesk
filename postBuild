@@ -11,9 +11,10 @@ chmod +x $HOME/.tomcat/bin/*.sh
 
 GUACAMOLE_VERSION="1.3.0"
 
-mkdir -p $HOME/.guacamole
 rm -rf $HOME/.tomcat/webapps
 mkdir $HOME/.tomcat/webapps
+mkdir -p $HOME/.guacamole
+cd $HOME/.guacamole
 wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/binary/guacamole-1.3.0.war" -O $HOME/.tomcat/webapps/ROOT.war
 wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/source/guacamole-server-1.3.0.tar.gz" -O $HOME/.guacamole/guacamole-server-${GUACAMOLE_VERSION}.tar.gz
 tar xvf $HOME/.guacamole/guacamole-server-${GUACAMOLE_VERSION}.tar.gz
