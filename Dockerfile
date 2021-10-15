@@ -23,4 +23,4 @@ RUN wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_V
 
 USER $NB_USER
 
-CMD ["/usr/local/tomcat/bin/startup.sh", "&&", "jupyter", "notebook", "--ip", "0.0.0.0"]
+# CMD ["/usr/local/tomcat/bin/startup.sh", "&&", "jupyter", "notebook", "--ip", "0.0.0.0"]
