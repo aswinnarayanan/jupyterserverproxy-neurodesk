@@ -1,0 +1,1 @@
+FROM aswinnarayanan/jupyterserverproxy-neurodesk:latest
