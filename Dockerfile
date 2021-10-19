@@ -9,13 +9,42 @@ USER root
 # Install base image dependancies
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
-        openjdk-11-jre \
+        locales \
+        sudo \
+        wget \
+        ca-certificates \
         make \
+        gcc \
+        g++ \
+        openjdk-11-jre \
         libpng-dev \
         libjpeg-turbo8-dev \
         libcairo2-dev \
         libtool-bin \
         libossp-uuid-dev \
+        libwebp-dev \
+        lxde \
+        openssh-server \
+        libpango1.0-dev \
+        libssh2-1-dev \
+        libssl-dev \
+        openssh-server \
+        libvncserver-dev \
+        libxt6 \
+        xauth \
+        xorg \
+        freerdp2-dev \
+        xrdp \
+        xauth \
+        xorg \
+        xorgxrdp \
+        tigervnc-standalone-server \
+        tigervnc-common \
+        lxterminal \
+        lxrandr \
+        curl \
+        gpg \
+        software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Apache Guacamole
@@ -35,6 +64,14 @@ COPY --chown=root:root user-mapping.xml /etc/guacamole/user-mapping.xml
 RUN echo "user-mapping: /etc/guacamole/user-mapping.xml" > /etc/guacamole/guacamole.properties \
     && touch /etc/guacamole/user-mapping.xml
 
+# Create user account with password-less sudo abilities and vnc user
+RUN addgroup jovyan \
+    && /usr/bin/printf '%s\n%s\n' 'password' 'password'| passwd jovyan \
+    && echo "jovyan ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && mkdir /home/jovyan/.vnc \
+    && chown jovyan /home/jovyan/.vnc \
+    && /usr/bin/printf '%s\n%s\n%s\n' 'password' 'password' 'n' | su jovyan -c vncpasswd
+
 USER $NB_USER
 # Install Apache Tomcat
 ARG TOMCAT_REL
@@ -47,3 +84,6 @@ RUN wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_V
 
 RUN pip install jupyter-server-proxy
 COPY jupyter_notebook_config.py /home/jovyan/.jupyter
+
+COPY --chown=jovyan:jovyan startup.sh /home/jovyan
+RUN chmod +x /home/jovyan/startup.sh
