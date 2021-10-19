@@ -24,3 +24,10 @@ chmod +x $HOME/.tomcat/bin/*.sh
 # make install
 # ldconfig
 # rm -r $HOME/.guacamole/guacamole-server-${GUACAMOLE_VERSION}*
+
+# make
+# libpng-dev
+# libjpeg-turbo8-dev
+# libcairo2-dev
+# libtool-bin
+# libossp-uuid-dev
