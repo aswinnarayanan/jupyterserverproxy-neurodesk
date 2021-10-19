@@ -45,6 +45,7 @@ RUN apt-get update \
         curl \
         gpg \
         software-properties-common \
+        dbus-x11 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Apache Guacamole

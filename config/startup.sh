@@ -6,4 +6,4 @@ sudo service ssh restart
 # USER=user vncserver -depth 24 -geometry 1920x1080 -name \"VNC\" :1
 
 /home/jovyan/tomcat/bin/startup.sh
-guacd -L debug -f &
+guacd -L debug -f
