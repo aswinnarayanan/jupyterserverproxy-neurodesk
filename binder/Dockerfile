@@ -1,1 +1,1 @@
-FROM aswinnarayanan/jupyterserverproxy-neurodesk:20211019102144
+FROM aswinnarayanan/jupyterserverproxy-neurodesk:20211019141038

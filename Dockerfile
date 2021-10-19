@@ -85,5 +85,5 @@ RUN wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_V
 RUN pip install jupyter-server-proxy
 COPY config/jupyter_notebook_config.py  /home/jovyan/.jupyter
 
-COPY --chown=jovyan:users config/startup.sh /home/jovyan
-RUN chmod +x /home/jovyan/startup.sh
+COPY --chown=jovyan:users config/neurodesktop.sh /home/jovyan
+RUN chmod +x /home/jovyan/neurodesktop.sh

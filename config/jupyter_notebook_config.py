@@ -1,6 +1,7 @@
 c.ServerProxy.servers = {
-  'tomcat': {
-    'command': ['/home/jovyan/startup.sh'],
-    'port': 8080
+  'neurodesktop': {
+    'command': ['/home/jovyan/neurodesktop.sh'],
+    'port': 8080,
+    'timeout': 15
   }
 }
