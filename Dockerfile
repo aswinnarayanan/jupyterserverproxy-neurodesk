@@ -22,8 +22,3 @@ RUN wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_V
 
 RUN pip install jupyter-server-proxy
 COPY jupyter_notebook_config.py /home/jovyan/.jupyter
-
-# ENTRYPOINT ["/bin/bash"]
-
-# CMD ["/bin/bash"]
-# CMD ["/usr/local/tomcat/bin/startup.sh", "&&", "jupyter", "notebook", "--ip", "0.0.0.0"]
