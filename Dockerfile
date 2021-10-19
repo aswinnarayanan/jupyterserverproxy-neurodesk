@@ -60,7 +60,7 @@ RUN wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERS
     && rm -r /etc/guacamole/guacamole-server-${GUACAMOLE_VERSION}*
 
 # Create Guacamole configurations
-COPY --chown=root:root user-mapping.xml /etc/guacamole/user-mapping.xml
+COPY --chown=root:root config/user-mapping.xml /etc/guacamole/user-mapping.xml
 RUN echo "user-mapping: /etc/guacamole/user-mapping.xml" > /etc/guacamole/guacamole.properties \
     && touch /etc/guacamole/user-mapping.xml
 
@@ -83,7 +83,7 @@ RUN wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_V
     && wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/binary/guacamole-1.3.0.war" -O $HOME/tomcat/webapps/ROOT.war
 
 RUN pip install jupyter-server-proxy
-COPY jupyter_notebook_config.py /home/jovyan/.jupyter
+COPY config/jupyter_notebook_config.py /home/jovyan/.jupyter
 
-COPY --chown=jovyan:jovyan startup.sh /home/jovyan
+COPY --chown=jovyan:jovyan config/startup.sh /home/jovyan
 RUN chmod +x /home/jovyan/startup.sh
