@@ -1,1 +1,1 @@
-FROM aswinnarayanan/jupyterserverproxy-neurodesk:latest
+FROM aswinnarayanan/jupyterserverproxy-neurodesk:testing
