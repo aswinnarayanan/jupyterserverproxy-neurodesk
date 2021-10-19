@@ -65,26 +65,25 @@ COPY --chown=root:root config/user-mapping.xml /etc/guacamole/user-mapping.xml
 RUN echo "user-mapping: /etc/guacamole/user-mapping.xml" > /etc/guacamole/guacamole.properties \
     && touch /etc/guacamole/user-mapping.xml
 
-# Create user account with password-less sudo abilities and vnc user
-RUN addgroup jovyan \
-    && /usr/bin/printf '%s\n%s\n' 'password' 'password'| passwd jovyan \
-    && echo "jovyan ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-    && mkdir /home/jovyan/.vnc \
-    && chown jovyan /home/jovyan/.vnc \
-    && /usr/bin/printf '%s\n%s\n%s\n' 'password' 'password' 'n' | su jovyan -c vncpasswd
+USER jovyan
+WORKDIR /home/jovyan
 
-USER $NB_USER
+# Create user account with password-less sudo abilities and vnc user
+RUN mkdir /home/jovyan/.vnc \
+    && chown jovyan /home/jovyan/.vnc \
+    && /usr/bin/printf '%s\n%s\n%s\n' 'password' 'password' 'n' | vncpasswd
+
 # Install Apache Tomcat
 ARG TOMCAT_REL
 ARG TOMCAT_VERSION
 RUN wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -P /tmp \
     && tar -xf /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz -C /tmp \
-    && mv /tmp/apache-tomcat-${TOMCAT_VERSION} $HOME/tomcat \
-    && rm -rf $HOME/tomcat/webapps/* \
-    && wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/binary/guacamole-1.3.0.war" -O $HOME/tomcat/webapps/ROOT.war
+    && mv /tmp/apache-tomcat-${TOMCAT_VERSION} /home/jovyan/tomcat \
+    && rm -rf /home/jovyan/tomcat/webapps/* \
+    && wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/binary/guacamole-1.3.0.war" -O /home/jovyan/tomcat/webapps/ROOT.war
 
 RUN pip install jupyter-server-proxy
-COPY config/jupyter_notebook_config.py /home/jovyan/.jupyter
+COPY config/jupyter_notebook_config.py  /home/jovyan/.jupyter
 
-COPY --chown=jovyan:jovyan config/startup.sh /home/jovyan
+COPY --chown=jovyan:users config/startup.sh /home/jovyan
 RUN chmod +x /home/jovyan/startup.sh
