@@ -1,5 +1,14 @@
-# jupyterserverproxy-neurodesk
+# jupyter-remote-desktop-proxy
 
-https://mybinder.org/v2/gh/aswinnarayanan/jupyterserverproxy-neurodesk/main
+Open in
+https://mybinder.org/v2/gh/NeuroDesk/jupyter-remote-desktop-proxy/jupyterserverproxy
 
-https://mybinder.org/v2/gh/aswinnarayanan/jupyterserverproxy-neurodesk/main?urlpath=proxy/8080/
+Start New > neurodesktop
+
+Wait for 10-15 seconds.
+
+If the page times out or produces 505 error, refresh.
+
+Guacamole
+username: jovyan
+password: password

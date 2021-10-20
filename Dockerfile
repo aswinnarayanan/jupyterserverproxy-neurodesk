@@ -171,11 +171,11 @@ RUN pip3 install nipype \
 COPY ./config/rc.xml /etc/xdg/openbox
 
 # Configure ITKsnap
-COPY ./config/.itksnap.org /etc/skel/.itksnap.org
-COPY ./config/mimeapps.list /etc/skel/.config/mimeapps.list
+COPY ./config/.itksnap.org /home/jovyan/.itksnap.org
+COPY ./config/mimeapps.list /home/jovyan/.config/mimeapps.list
 
 # Apply custom bottom panel configuration
-COPY ./config/panel /etc/skel/.config/lxpanel/LXDE/panels/panel
+COPY ./config/panel /home/jovyan/.config/lxpanel/LXDE/panels/panel
 
 # Allow the root user to access the sshfs mount
 # https://github.com/NeuroDesk/neurodesk/issues/47
@@ -183,6 +183,31 @@ RUN sed -i 's/#user_allow_other/user_allow_other/g' /etc/fuse.conf
 
 # Fetch singularity bind mount list
 RUN mkdir -p `curl https://raw.githubusercontent.com/NeuroDesk/neurocontainers/master/recipes/globalMountPointList.txt`
+
+USER jovyan
+WORKDIR /home/jovyan
+
+# Create user account with password-less sudo abilities and vnc user
+RUN mkdir /home/jovyan/.vnc \
+    && chown jovyan /home/jovyan/.vnc \
+    && /usr/bin/printf '%s\n%s\n%s\n' 'password' 'password' 'n' | vncpasswd
+
+# Install Apache Tomcat
+ARG TOMCAT_REL
+ARG TOMCAT_VERSION
+RUN wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -P /tmp \
+    && tar -xf /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz -C /tmp \
+    && mv /tmp/apache-tomcat-${TOMCAT_VERSION} /home/jovyan/.tomcat \
+    && rm -rf /home/jovyan/.tomcat/webapps/* \
+    && wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/binary/guacamole-1.3.0.war" -O /home/jovyan/.tomcat/webapps/ROOT.war
+
+RUN pip install jupyter-server-proxy
+COPY config/jupyter_notebook_config.py  /home/jovyan/.jupyter
+
+COPY --chown=jovyan:users config/neurodesktop.sh /home/jovyan/.neurodesktop.sh
+RUN chmod +x /home/jovyan/.neurodesktop.sh
+
+USER root
 
 # Install singularity
 ARG GO_VERSION
@@ -202,13 +227,6 @@ RUN export VERSION=${GO_VERSION} OS=linux ARCH=amd64 \
     && make -C builddir \
     && make -C builddir install \
     && rm -rf /usr/local/go $GOPATH 
-
-# Setup module system & singularity
-COPY ./config/.bashrc /tmp/.bashrc
-RUN cat /tmp/.bashrc >> /etc/skel/.bashrc && rm /tmp/.bashrc \
-    && directories=`curl https://raw.githubusercontent.com/NeuroDesk/caid/master/recipes/globalMountPointList.txt` \
-    && mounts=`echo $directories | sed 's/ /,/g'` \
-    && echo "export SINGULARITY_BINDPATH=${mounts},/neurodesktop-storage" >> /etc/skel/.bashrc
 
 # add Globus client
 WORKDIR /opt/globusconnectpersonal
@@ -233,38 +251,9 @@ RUN echo 'pref("browser.startup.homepage", "http://neurodesk.github.io", locked)
     && echo 'pref("browser.aboutwelcome.enabled", true, locked);' >> /etc/firefox/syspref.js
 
 # Create link to persistent storage on Desktop (This needs to happen before the users gets created!)
-RUN mkdir -p /etc/skel/Desktop/ \
-    && ln -s /neurodesktop-storage /etc/skel/Desktop/
-
 RUN mkdir /neurodesktop-storage && chown -R jovyan:users /neurodesktop-storage
-
-USER jovyan
-WORKDIR /home/jovyan
-
-# Link vscode config to persistant storage
-RUN mkdir -p /home/user/.config \
-    && ln -s /neurodesktop-storage/.config/Code .config/Code \
-    && ln -s /neurodesktop-storage/.vscode .vscode
-
-# Create user account with password-less sudo abilities and vnc user
-RUN mkdir /home/jovyan/.vnc \
-    && chown jovyan /home/jovyan/.vnc \
-    && /usr/bin/printf '%s\n%s\n%s\n' 'password' 'password' 'n' | vncpasswd
-
-# Install Apache Tomcat
-ARG TOMCAT_REL
-ARG TOMCAT_VERSION
-RUN wget https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_REL}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -P /tmp \
-    && tar -xf /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz -C /tmp \
-    && mv /tmp/apache-tomcat-${TOMCAT_VERSION} /home/jovyan/tomcat \
-    && rm -rf /home/jovyan/tomcat/webapps/* \
-    && wget "https://apache.mirror.digitalpacific.com.au/guacamole/${GUACAMOLE_VERSION}/binary/guacamole-1.3.0.war" -O /home/jovyan/tomcat/webapps/ROOT.war
-
-RUN pip install jupyter-server-proxy
-COPY config/jupyter_notebook_config.py  /home/jovyan/.jupyter
-
-COPY --chown=jovyan:users config/neurodesktop.sh /home/jovyan
-RUN chmod +x /home/jovyan/neurodesktop.sh
+RUN mkdir -p /home/jovyan/Desktop/ \
+    && ln -s /neurodesktop-storage /home/jovyan/Desktop/
 
 # Install neurodesk
 ADD "http://api.github.com/repos/NeuroDesk/neurocommand/commits/main" /tmp/skipcache
@@ -274,3 +263,18 @@ RUN rm /tmp/skipcache \
     && bash build.sh --lxde --edit \
     && bash install.sh \
     && ln -s /neurodesktop-storage/containers /neurocommand/local/containers 
+
+USER jovyan
+WORKDIR /home/jovyan
+
+# Setup module system & singularity
+COPY ./config/.bashrc /home/jovyan/tmp_bashrc
+RUN cat /home/jovyan/tmp_bashrc >> /home/jovyan/.bashrc && rm /home/jovyan/tmp_bashrc \
+    && directories=`curl https://raw.githubusercontent.com/NeuroDesk/caid/master/recipes/globalMountPointList.txt` \
+    && mounts=`echo $directories | sed 's/ /,/g'` \
+    && echo "export SINGULARITY_BINDPATH=${mounts},/neurodesktop-storage" >> /home/jovyan/.bashrc
+
+# Link vscode config to persistant storage
+RUN mkdir -p /home/jovyan/.config \
+    && ln -s /neurodesktop-storage/.config/Code .config/Code \
+    && ln -s /neurodesktop-storage/.vscode .vscode

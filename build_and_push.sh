@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# docker build . -t aswinnarayanan/jupyterserverproxy-neurodesk:latest
-# docker push aswinnarayanan/jupyterserverproxy-neurodesk:latest
-
 timestamp=$(date +%Y%m%d%H%M%S)
 
-docker build . -t aswinnarayanan/jupyterserverproxy-neurodesk:$timestamp
-docker push aswinnarayanan/jupyterserverproxy-neurodesk:$timestamp
+docker build . -t vnmd/jupyter-remote-desktop-proxy:$timestamp
+docker push vnmd/jupyter-remote-desktop-proxy:$timestamp
 
-echo "FROM aswinnarayanan/jupyterserverproxy-neurodesk:$timestamp" > binder/Dockerfile
+echo "FROM vnmd/jupyter-remote-desktop-proxy:$timestamp" > binder/Dockerfile
